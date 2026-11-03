@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceará Rastreamento | Rastreamento de Veículos</title>
+    <meta name="description" content="Rastreamento de veículos em tempo real no Ceará. Acompanhe sua frota ou seu carro pelo celular, com histórico de rotas e alertas de velocidade.">
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --primary-dark: #0d0d1a;
+            --accent: #b71c1c;
+            --accent-light: #d32f2f;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --text-light: #e0e0e0;
+            --text-muted: #a8a8b8;
+            --white: #ffffff;
+            --line: rgba(255, 255, 255, 0.08);
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+        body {
+            font-family: 'Poppins', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        a:focus-visible, button:focus-visible {
+            outline: 3px solid var(--white);
+            outline-offset: 3px;
+        }
+
+        /* ---------- Navegação ---------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.7rem 5%;
+            background: var(--bg-card);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-img { height: 52px; width: auto; display: block; }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            white-space: nowrap;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent-light); }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.75rem 1.6rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.6rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 75% 50%, rgba(183, 28, 28, 0.22) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+            gap: 3rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.1rem, 5vw, 3.4rem);
+            line-height: 1.15;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1.2rem;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-muted);
+            max-width: 520px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+        .btn-outline {
+            display: inline-block;
+            padding: 0.75rem 1.6rem;
+            border-radius: var(--radius);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent-light);
+            background: rgba(183, 28, 28, 0.15);
+        }
+
+        .hero-logo {
+            padding: 1rem;
+            filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.6));
+        }
+
+        .hero-logo img { width: 100%; height: auto; display: block; }
+
+        /* ---------- Seções ---------- */
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--white);
+        }
+
+        .features { padding: 5rem 5%; background: var(--bg-dark); }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            border-top: 3px solid var(--accent);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1.2rem;
+            color: var(--accent-light);
+        }
+
+        .feature-card h3 { margin-bottom: 0.6rem; font-size: 1.2rem; color: var(--white); }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* Como funciona (sequência real, por isso numerada) */
+        .tracking { padding: 5rem 5%; background: var(--primary-dark); }
+
+        .steps {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 4rem;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.8rem;
+            height: 2.8rem;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: grid;
+            place-items: center;
+        }
+
+        .steps h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .steps p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .contact {
+            padding: 5rem 5%;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .contact h2 { font-size: clamp(1.6rem, 3.5vw, 2.1rem); color: var(--white); margin-bottom: 1rem; }
+
+        .contact p {
+            margin: 0 auto 2rem;
+            color: var(--text-muted);
+            max-width: 560px;
+        }
+
+        .contact-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn-primary, .btn-outline { vertical-align: middle; }
+        .contact-actions .btn-primary,
+        .contact-actions .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .icon { width: 1.25em; height: 1.25em; flex-shrink: 0; }
+
+        footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+        footer a:hover { color: var(--accent-light); }
+
+        footer {
+            padding: 2rem 5%;
+            background: var(--primary-dark);
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--line);
+            font-size: 0.9rem;
+        }
+
+
+        /* ---------- Faixa de destaque com veículos ---------- */
+        .road {
+            padding: 4rem 5% 0;
+            background: var(--bg-dark);
+            overflow: hidden;
+        }
+
+        .road-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 0.85fr 1.25fr;
+            gap: 2rem;
+            align-items: end;
+        }
+
+        .road-text { padding-bottom: 4rem; align-self: center; }
+
+        .road-text h2 {
+            font-size: clamp(1.7rem, 3.6vw, 2.4rem);
+            line-height: 1.2;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 0.8rem;
+        }
+
+        .road-text p { color: var(--text-muted); font-size: 1.05rem; }
+
+        .road-scene {
+            position: relative;
+            height: 280px;
+            border-bottom: 4px dashed rgba(255, 255, 255, 0.18);
+        }
+
+        .road-scene > svg { position: absolute; }
+        .v-car { position: absolute; width: 58%; left: 0; bottom: 4px; filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); }
+        .v-moto { position: absolute; width: 38%; right: 0; bottom: 4px; filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); }
+        .v-car img, .v-car svg, .v-moto img, .v-moto svg { display: block; width: 100%; height: auto; }
+        .pin { width: 34px; height: 48px; filter: drop-shadow(0 0 10px rgba(211, 47, 47, .8)); }
+        .pin-a { left: 32%; top: 62px; animation: pulse 2.4s ease-in-out infinite; }
+        .pin-b { right: 17%; top: 52px; animation: pulse 2.4s ease-in-out .8s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* ---------- Planos ---------- */
+        .plans { padding: 5rem 5%; background: var(--primary-dark); }
+
+        .plans-grid {
+            max-width: 860px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 2rem;
+        }
+
+        .plan-card {
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 2rem 2rem 2.2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .plan-card.featured {
+            border: 2px solid var(--accent-light);
+            box-shadow: 0 0 40px rgba(183, 28, 28, 0.25);
+        }
+
+        .plan-vehicle { width: 100%; max-width: 260px; height: 140px; margin-bottom: 1rem; }
+
+        .plan-card h3 { font-size: 1.4rem; color: var(--white); }
+
+        .price {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.1;
+            margin: 0.4rem 0 1.2rem;
+        }
+
+        .price .currency { font-size: 1.3rem; font-weight: 600; color: var(--accent-light); }
+        .price .per { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+
+        .plan-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.8rem;
+            display: grid;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .plan-list li { position: relative; padding-left: 1.6rem; }
+
+        .plan-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.45em;
+            width: 0.9rem;
+            height: 0.5rem;
+            border-left: 3px solid var(--accent-light);
+            border-bottom: 3px solid var(--accent-light);
+            transform: rotate(-45deg);
+        }
+
+        .plan-card .btn-primary { margin-top: auto; }
+
+        .plans-note { text-align: center; margin-top: 2.5rem; color: var(--text-muted); font-size: 1.05rem; }
+
+        /* ---------- Aplicativos ---------- */
+        .apps { padding: 5rem 5%; background: var(--bg-dark); text-align: center; }
+        .apps .section-title { margin-bottom: 1rem; }
+        .apps-sub { max-width: 560px; margin: 0 auto 2.5rem; color: var(--text-muted); }
+
+        .apps-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .app-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.8rem 1.6rem;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius);
+            color: var(--white);
+            text-decoration: none;
+            text-align: left;
+            transition: border-color 0.3s, background 0.3s, transform 0.2s;
+        }
+
+        .app-btn:hover { border-color: var(--accent-light); background: rgba(183, 28, 28, 0.15); transform: translateY(-2px); }
+        .app-btn .icon { width: 2rem; height: 2rem; }
+        .app-btn small { display: block; font-size: 0.72rem; color: var(--text-muted); line-height: 1.2; }
+        .app-btn strong { font-size: 1.05rem; line-height: 1.2; }
+
+        @media (max-width: 860px) {
+            .road-inner { grid-template-columns: 1fr; }
+            .road-text { padding-bottom: 1rem; text-align: center; }
+            .road-scene { height: 200px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pin-a, .pin-b { animation: none; }
+        }
+
+        /* ---------- Responsivo ---------- */
+        @media (max-width: 860px) {
+            .hero-inner { grid-template-columns: 1fr; text-align: center; }
+            .hero p { margin-left: auto; margin-right: auto; }
+            .hero-actions { justify-content: center; }
+            .hero-logo { max-width: 380px; margin: 0 auto; order: -1; }
+        }
+
+        @media (max-width: 1024px) {
+            nav > .btn-primary { display: none; }
+            .mobile-toggle { display: block; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 1rem 5% 1.5rem;
+                gap: 1rem;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.active { display: flex; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ilustrações de veículos (fundo transparente) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e53935"/>
+                <stop offset="1" stop-color="#8e1414"/>
+            </linearGradient>
+            <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#6c7a99"/>
+                <stop offset="1" stop-color="#1c2238"/>
+            </linearGradient>
+            <symbol id="car" viewBox="0 0 400 170">
+                <ellipse cx="200" cy="152" rx="170" ry="9" fill="#000" opacity="0.35"/>
+                <path d="M18 118 L18 100 Q18 88 34 85 L88 77 Q112 42 152 38 L248 38 Q292 40 314 70 L362 78 Q382 82 382 99 L382 118 Q382 126 372 126 L28 126 Q18 126 18 118 Z" fill="url(#carBody)"/>
+                <path d="M104 75 Q120 49 152 46 L193 46 L193 75 Z" fill="url(#glass)"/>
+                <path d="M203 46 L246 46 Q276 48 293 75 L203 75 Z" fill="url(#glass)"/>
+                <path d="M34 86 L88 78" stroke="#fff" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+                <rect x="196" y="82" width="22" height="4" rx="2" fill="#6b0f0f"/>
+                <path d="M362 92 L380 94 L380 102 L360 102 Z" fill="#ffe9a6"/>
+                <path d="M20 96 L32 96 L32 104 L20 104 Z" fill="#ff8a80"/>
+                <circle cx="100" cy="126" r="30" fill="#0b0b14"/>
+                <circle cx="100" cy="126" r="15" fill="#c9ccd6"/>
+                <circle cx="100" cy="126" r="5" fill="#6b6f80"/>
+                <circle cx="300" cy="126" r="30" fill="#0b0b14"/>
+                <circle cx="300" cy="126" r="15" fill="#c9ccd6"/>
+                <circle cx="300" cy="126" r="5" fill="#6b6f80"/>
+            </symbol>
+            <symbol id="moto" viewBox="0 0 300 180">
+                <ellipse cx="150" cy="168" rx="125" ry="8" fill="#000" opacity="0.35"/>
+                <circle cx="58" cy="128" r="38" fill="none" stroke="#0b0b14" stroke-width="12"/>
+                <circle cx="58" cy="128" r="30" fill="none" stroke="#c9ccd6" stroke-width="3"/>
+                <circle cx="58" cy="128" r="6" fill="#c9ccd6"/>
+                <circle cx="242" cy="128" r="38" fill="none" stroke="#0b0b14" stroke-width="12"/>
+                <circle cx="242" cy="128" r="30" fill="none" stroke="#c9ccd6" stroke-width="3"/>
+                <circle cx="242" cy="128" r="6" fill="#c9ccd6"/>
+                <path d="M58 128 L128 118" stroke="#8a8fa3" stroke-width="7" stroke-linecap="round"/>
+                <path d="M128 118 L112 90 L176 94 L204 120" stroke="#8a8fa3" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M120 112 L190 108 L196 126 L126 132 Z" fill="#2a2e44"/>
+                <path d="M108 86 Q132 62 176 70 L190 92 L112 98 Z" fill="url(#carBody)"/>
+                <path d="M56 86 Q84 78 112 88 L110 100 L52 98 Z" fill="#1a1a2e"/>
+                <path d="M196 62 L226 54" stroke="#c9ccd6" stroke-width="6" stroke-linecap="round"/>
+                <path d="M200 66 L242 128" stroke="#c9ccd6" stroke-width="7" stroke-linecap="round"/>
+                <path d="M200 74 Q214 60 226 70 L220 84 Z" fill="#ffe9a6"/>
+                <path d="M52 94 L40 86 L34 90" stroke="#ff8a80" stroke-width="5" stroke-linecap="round" fill="none"/>
+            </symbol>
+            <symbol id="pin" viewBox="0 0 40 56">
+                <path d="M20 54 C20 54 2 34 2 19 A18 18 0 0 1 38 19 C38 34 20 54 20 54 Z" fill="#d32f2f" stroke="#fff" stroke-width="3"/>
+                <circle cx="20" cy="19" r="7" fill="#fff"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <nav>
+        <a href="#home" class="logo" aria-label="Ceará Rastreamento, início">
+            <img src="logo.png" alt="Ceará Rastreamento" class="logo-img">
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Início</a></li>
+            <li><a href="#funcionalidades">Funcionalidades</a></li>
+            <li><a href="#planos">Planos</a></li>
+            <li><a href="#aplicativos">Aplicativos</a></li>
+            <li><a href="#contato">Contato</a></li>
+            <li><a href="https://jp.plataformatk.com.br/login" target="_blank" rel="noopener">Área do cliente</a></li>
+        </ul>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+        <a href="#contato" class="btn-primary">Fale Conosco</a>
+    </nav>
+
+    <header class="hero" id="home">
+        <div class="hero-inner">
+            <div>
+                <h1>Saiba onde seu veículo está, a qualquer hora.</h1>
+                <p>Rastreamento em tempo real para carros, motos e frotas. Acompanhe tudo pelo celular ou computador, com segurança e sem complicação.</p>
+                <div class="hero-actions">
+                    <a href="#contato" class="btn-primary">Quero rastrear meu veículo</a>
+                    <a href="#funcionalidades" class="btn-outline">Ver funcionalidades</a>
+                </div>
+            </div>
+            <div class="hero-logo">
+                <img src="logo.png" alt="Logo Ceará Rastreamento: mapa do estado com marcador de localização">
+            </div>
+        </div>
+    </header>
+
+    <section class="road" aria-label="Frase de destaque">
+        <div class="road-inner">
+            <div class="road-text">
+                <h2>Seu veículo sempre ao alcance dos seus olhos.</h2>
+                <p>Tranquilidade para você, proteção para quem você ama.</p>
+            </div>
+            <div class="road-scene" aria-hidden="true">
+                <svg class="pin pin-a" viewBox="0 0 40 56"><use href="#pin"/></svg>
+                <svg class="pin pin-b" viewBox="0 0 40 56"><use href="#pin"/></svg>
+                <div class="v-car">
+                    <img src="carro.png" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.remove()">
+                    <svg viewBox="0 0 400 170"><use href="#car"/></svg>
+                </div>
+                <div class="v-moto">
+                    <img src="moto.png" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.remove()">
+                    <svg viewBox="0 0 300 180"><use href="#moto"/></svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="funcionalidades">
+        <h2 class="section-title">Por que escolher a Ceará Rastreamento?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                <h3>Rastreamento ao vivo</h3>
+                <p>Veja a localização exata do veículo em tempo real, direto no celular ou no computador.</p>
+            </div>
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-6 4 4 8-10"/><path d="M15 5h5v5"/></svg>
+                <h3>Histórico de rotas</h3>
+                <p>Consulte o percurso dos últimos dias, com data, hora e velocidade média de cada trajeto.</p>
+            </div>
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                <h3>Alertas de velocidade</h3>
+                <p>Receba um aviso na hora quando o veículo passar do limite de velocidade que você definir.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="plans" id="planos">
+        <h2 class="section-title">Planos que cabem no seu bolso</h2>
+        <div class="plans-grid">
+            <article class="plan-card">
+                <svg class="plan-vehicle" viewBox="0 0 300 180" role="img" aria-label="Moto"><use href="#moto"/></svg>
+                <h3>Moto</h3>
+                <p class="price"><span class="currency">R$</span> 35 <span class="per">/mês</span></p>
+                <ul class="plan-list">
+                    <li>Localização em tempo real</li>
+                    <li>Histórico de rotas</li>
+                    <li>Alertas de velocidade</li>
+                    <li>App Android, iOS e portal web</li>
+                </ul>
+                <a class="btn-primary" href="https://wa.me/5585989494062?text=Ol%C3%A1!%20Quero%20contratar%20o%20plano%20de%20rastreamento%20para%20moto." target="_blank" rel="noopener">Quero para minha moto</a>
+            </article>
+            <article class="plan-card featured">
+                <svg class="plan-vehicle" viewBox="0 0 400 170" role="img" aria-label="Carro"><use href="#car"/></svg>
+                <h3>Carro</h3>
+                <p class="price"><span class="currency">R$</span> 50 <span class="per">/mês</span></p>
+                <ul class="plan-list">
+                    <li>Localização em tempo real</li>
+                    <li>Histórico de rotas</li>
+                    <li>Alertas de velocidade</li>
+                    <li>App Android, iOS e portal web</li>
+                </ul>
+                <a class="btn-primary" href="https://wa.me/5585989494062?text=Ol%C3%A1!%20Quero%20contratar%20o%20plano%20de%20rastreamento%20para%20carro." target="_blank" rel="noopener">Quero para meu carro</a>
+            </article>
+        </div>
+        <p class="plans-note">Proteger o que é seu custa menos do que você imagina.</p>
+    </section>
+
+    <section class="apps" id="aplicativos">
+        <h2 class="section-title">Seu veículo na palma da mão</h2>
+        <p class="apps-sub">Baixe o aplicativo no celular ou entre pelo portal web, no computador, usando o seu login.</p>
+        <div class="apps-grid">
+            <a class="app-btn" href="https://play.google.com/store/apps/details?id=br.com.platformtk" target="_blank" rel="noopener">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3.5v17a1 1 0 0 0 1.5.9l14-8.5a1 1 0 0 0 0-1.8l-14-8.5A1 1 0 0 0 5 3.5z"/></svg>
+                <span><small>Disponível no</small><strong>Google Play</strong></span>
+            </a>
+            <a class="app-btn" href="https://apps.apple.com/br/app/monitor-lite-plataformatk/id994989834" target="_blank" rel="noopener">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+                <span><small>Baixar na</small><strong>App Store</strong></span>
+            </a>
+            <a class="app-btn" href="https://jp.plataformatk.com.br/login" target="_blank" rel="noopener">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg>
+                <span><small>Acessar pelo computador</small><strong>Portal web</strong></span>
+            </a>
+        </div>
+    </section>
+
+    <section class="tracking" id="rastreamento">
+        <h2 class="section-title">Como funciona</h2>
+        <ol class="steps">
+            <li>
+                <h3>Instalamos o rastreador</h3>
+                <p>Nossa equipe instala o equipamento no seu veículo de forma discreta e rápida.</p>
+            </li>
+            <li>
+                <h3>Você acessa a plataforma</h3>
+                <p>Entre com seu login pelo celular ou computador e veja seus veículos no mapa.</p>
+            </li>
+            <li>
+                <h3>Acompanhe e receba alertas</h3>
+                <p>Monitore rotas, velocidade e movimentações, e seja avisado quando algo sair do normal.</p>
+            </li>
+        </ol>
+    </section>
+
+    <section class="contact" id="contato">
+        <h2>Entre em contato</h2>
+        <p>Não espere acontecer para agir. Proteja seu veículo hoje mesmo e fale com nossa equipe.</p>
+        <div class="contact-actions">
+            <a href="https://wa.me/5585989494062?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20rastreamento%20de%20ve%C3%ADculos." class="btn-primary" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>(85) 98949-4062</a>
+            <a href="https://www.instagram.com/ceararastreamento/" class="btn-outline" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/></svg>@ceararastreamento</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Ceará Rastreamento. Todos os direitos reservados.</p>
+        <p><a href="https://www.instagram.com/ceararastreamento/" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/></svg>@ceararastreamento</a> &nbsp;|&nbsp; <a href="https://wa.me/5585989494062" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>(85) 98949-4062</a></p>
+    </footer>
+
+    <script>
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileToggle.addEventListener('click', () => {
+            const open = navLinks.classList.toggle('active');
+            mobileToggle.setAttribute('aria-expanded', open);
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+</html>
